@@ -20,12 +20,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/api/hello", () =>
-{
-    var helloMessage = "Hello and welcome";
-    return helloMessage;
-});
-
 app.MapGet("/api/patients", async (ReferralContext context) =>
 {
     var patients = await context.Patients.ToListAsync();
