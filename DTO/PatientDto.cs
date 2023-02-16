@@ -1,4 +1,4 @@
-﻿namespace ApiLearning.DTO
+﻿namespace ReferralApi.DTO
 {
     public class PatientDto
     {

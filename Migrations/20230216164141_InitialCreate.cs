@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ApiLearning.Migrations
+namespace ReferralApi.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,35 +35,53 @@ namespace ApiLearning.Migrations
                 name: "Patients",
                 columns: table => new
                 {
-                    PatientId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateOfBirth = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HospitalNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AddressLine1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AddressLine2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AddressLine2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Postcode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DoctorId = table.Column<int>(type: "int", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Patients", x => x.PatientId);
+                    table.PrimaryKey("PK_Patients", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DoctorPatient",
+                columns: table => new
+                {
+                    DoctorsId = table.Column<int>(type: "int", nullable: false),
+                    PatientsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorPatient", x => new { x.DoctorsId, x.PatientsId });
                     table.ForeignKey(
-                        name: "FK_Patients_Doctors_DoctorId",
-                        column: x => x.DoctorId,
+                        name: "FK_DoctorPatient_Doctors_DoctorsId",
+                        column: x => x.DoctorsId,
                         principalTable: "Doctors",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorPatient_Patients_PatientsId",
+                        column: x => x.PatientsId,
+                        principalTable: "Patients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Referrals",
                 columns: table => new
                 {
-                    ReferralId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DepartmentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ReasonForReferral = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -74,7 +92,7 @@ namespace ApiLearning.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Referrals", x => x.ReferralId);
+                    table.PrimaryKey("PK_Referrals", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Referrals_Doctors_DoctorId",
                         column: x => x.DoctorId,
@@ -85,14 +103,14 @@ namespace ApiLearning.Migrations
                         name: "FK_Referrals_Patients_PatientId",
                         column: x => x.PatientId,
                         principalTable: "Patients",
-                        principalColumn: "PatientId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Patients_DoctorId",
-                table: "Patients",
-                column: "DoctorId");
+                name: "IX_DoctorPatient_PatientsId",
+                table: "DoctorPatient",
+                column: "PatientsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Referrals_DoctorId",
@@ -109,13 +127,16 @@ namespace ApiLearning.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "DoctorPatient");
+
+            migrationBuilder.DropTable(
                 name: "Referrals");
 
             migrationBuilder.DropTable(
-                name: "Patients");
+                name: "Doctors");
 
             migrationBuilder.DropTable(
-                name: "Doctors");
+                name: "Patients");
         }
     }
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "xQj9LJAEOFg5gLR1kULGUCu2XIn98bRQK1cPjcvXKmd9YnSNsbH/raKgb/3z+6N3c8Vk8Bctb/pm9UKB5HMDcA==",
+  "dgSpecHash": "hdHuOmm2sf0xVVNKFNsFyxxlURtSeDAXMdXUxuloSqoxak+wnKw+ZXzQckjtHdpwleQt8crS9JbPpcxjEEsoig==",
   "success": true,
-  "projectFilePath": "C:\\Users\\piccni\\dev\\ApiLearning\\ApiLearning.csproj",
+  "projectFilePath": "C:\\Users\\piccni\\dev\\ReferralApi\\ReferralApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\piccni\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\piccni\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

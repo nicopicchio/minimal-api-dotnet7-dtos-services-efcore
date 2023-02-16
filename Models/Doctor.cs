@@ -1,4 +1,4 @@
-﻿namespace ApiLearning.Models
+﻿namespace ReferralApi.Models
 {
     public class Doctor
     {

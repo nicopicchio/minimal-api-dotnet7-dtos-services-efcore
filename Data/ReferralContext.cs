@@ -1,7 +1,7 @@
-﻿using ApiLearning.Models;
+﻿using ReferralApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ApiLearning.Data
+namespace ReferralApi.Data
 {
     public class ReferralContext : DbContext
     {
