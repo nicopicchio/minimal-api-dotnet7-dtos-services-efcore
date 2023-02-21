@@ -20,8 +20,8 @@ namespace ReferralApi.Services
         // error handling to be implemented
         public async Task<PatientDto> GetPatientById(int id)
         {
-            var patientDto = await _context.Patients.Where(patient => patient.Id == id).ProjectTo<PatientDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync();
-            return patientDto;
+            var patient = await _context.Patients.Where(patient => patient.Id == id).ProjectTo<PatientDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync();
+            return patient;
         }
     }
 }
