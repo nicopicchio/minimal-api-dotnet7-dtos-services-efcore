@@ -57,24 +57,24 @@ app.MapGet("/api/patients/{id}", async (PatientService service, int id) =>
     return Results.Ok(patient);
 });
 
-app.MapGet("/api/referrals/{id}", async (ReferralContext context, int id) =>
+app.MapGet("/api/doctors/{id}", async (DoctorService service, int id) =>
 {
-    var referral = await context.Referrals.FindAsync(id);
-    if (referral is null)
-    {
-        return Results.NotFound("Referral not found!");
-    }
-    return Results.Ok(referral);
-});
-
-app.MapGet("/api/doctors/{id}", async (ReferralContext context, int id) =>
-{
-    var doctor = await context.Doctors.FindAsync(id);
+    var doctor = await service.GetDoctorById(id);
     if (doctor is null)
     {
         return Results.NotFound("Doctor not found!");
     }
     return Results.Ok(doctor);
+});
+
+app.MapGet("/api/referral/{id}", async (ReferralService service, int id) =>
+{
+    var referral = await service.GetReferralById(id);
+    if (referral is null)
+    {
+        return Results.NotFound("Referral not found!");
+    }
+    return Results.Ok(referral);
 });
 
 

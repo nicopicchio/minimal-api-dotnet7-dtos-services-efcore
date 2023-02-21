@@ -21,7 +21,16 @@ namespace ReferralApi.Services
         public async Task<PatientDto> GetPatientById(int id)
         {
             var patient = await _context.Patients.Where(patient => patient.Id == id).ProjectTo<PatientDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync();
+            if (patient == null)
+            {
+                throw new Exception("Patient not found");
+            }
             return patient;
+        }
+
+        public async Task<PatientDto> AddNewPatient()
+        {
+            
         }
     }
 }
