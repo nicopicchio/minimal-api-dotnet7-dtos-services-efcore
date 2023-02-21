@@ -1,6 +1,8 @@
 using ReferralApi.Data;
 using ReferralApi.Models;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using ReferralApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ReferralContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
@@ -44,9 +47,9 @@ app.MapGet("/api/doctors", async (ReferralContext context) =>
 
 // Endpoints to GET a specific patient/doctor/referral based on the id
 
-app.MapGet("/api/patients/{id}", async (ReferralContext context, int id) =>
+app.MapGet("/api/patients/{id}", async (PatientService service, int id) =>
 {
-    var patient = await context.Patients.FindAsync(id);
+    var patient = await service.GetPatientById(id);
     if (patient is null)
     {
         return Results.NotFound("Patient not found!");
