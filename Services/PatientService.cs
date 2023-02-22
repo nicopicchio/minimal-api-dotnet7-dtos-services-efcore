@@ -17,10 +17,20 @@ namespace ReferralApi.Services
             _mapper = mapper;
         }
         // this converts my patient entity to the dto by mapping (automapper)
-        // error handling to be implemented
+
+        public async Task<ICollection<Patient>> GetAllPatients()
+        {
+            var patientList = await _context.Patients.ToListAsync();
+            if (patientList.Count == 0)
+            {
+                throw new Exception("Patients list empty");
+            }
+            return patientList;
+        }
+
         public async Task<PatientDto> GetPatientById(int id)
         {
-            var patient = await _context.Patients.Where(patient => patient.Id == id).ProjectTo<PatientDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync();
+            var patient = await _context.Patients.Where(p => p.Id == id).ProjectTo<PatientDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync();
             if (patient == null)
             {
                 throw new Exception("Patient not found");
@@ -28,9 +38,16 @@ namespace ReferralApi.Services
             return patient;
         }
 
-        public async Task<PatientDto> AddNewPatient()
+        public async Task<PatientDto> AddNewPatient(Patient patient)
         {
-            
+            _context.Patients.Add(patient);
+            await _context.SaveChangesAsync();
+            var response = await _context.Patients.Where(p => p.Id == patient.Id).ProjectTo<PatientDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync();
+            if (response == null)
+            {
+                throw new Exception("Something went wrong");
+            }
+            return response;
         }
     }
 }

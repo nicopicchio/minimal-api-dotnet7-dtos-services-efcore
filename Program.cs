@@ -3,6 +3,8 @@ using ReferralApi.Models;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using ReferralApi.Services;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,13 @@ builder.Services.AddDbContext<ReferralContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<PatientService>();
+builder.Services.AddScoped<DoctorService>();
+builder.Services.AddScoped<ReferralService>();
+builder.Services.Configure<JsonOptions>(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
 
 var app = builder.Build();
 
@@ -26,21 +35,21 @@ app.UseHttpsRedirection();
 
 // Endpoints to GET a list of all patients/doctors/referrals
 
-app.MapGet("/api/patients", async (ReferralContext db) =>
+app.MapGet("/api/patients", async (PatientService service) =>
 {
-    var patients = await db.Patients.ToListAsync();
+    var patients = await service.GetAllPatients();
     return patients;
 });
 
-app.MapGet("/api/referrals", async (ReferralContext context) =>
+app.MapGet("/api/referrals", async (ReferralService service) =>
 {
-    var referrals = await context.Referrals.ToListAsync();
+    var referrals = await service.GetAllReferrals();
     return referrals;
 });
 
-app.MapGet("/api/doctors", async (ReferralContext context) =>
+app.MapGet("/api/doctors", async (DoctorService service) =>
 {
-    var doctors = await context.Doctors.ToListAsync();
+    var doctors = await service.GetAllDoctors();
     return doctors;
 });
 
@@ -80,25 +89,22 @@ app.MapGet("/api/referral/{id}", async (ReferralService service, int id) =>
 
 // Endpoints to POST a new patient/doctor/referral
 
-app.MapPost("/api/patients", async (ReferralContext db, Patient patient) =>
+app.MapPost("/api/patients", async (PatientService service, [FromBody] Patient patient) =>
 {
-    await db.Patients.AddAsync(patient);
-    await db.SaveChangesAsync();
-    return Results.Created($"/api/patients/{patient.Id}", patient);
+    var response = await service.AddNewPatient(patient);
+    return Results.Created($"/api/patients/{response.Id}", response);
 });
 
-app.MapPost("/api/referrals", async (ReferralContext db, Referral referral) =>
+app.MapPost("/api/referrals", async (ReferralService service, [FromBody] Referral referral) =>
 {
-    await db.Referrals.AddAsync(referral);
-    await db.SaveChangesAsync();
-    return Results.Created($"/api/patients/{referral.Id}", referral);
+    var response = await service.AddNewReferral(referral);
+    return Results.Created($"/api/patients/{response.Id}", response);
 });
 
-app.MapPost("/api/doctors", async (ReferralContext db, Doctor doctor) =>
+app.MapPost("/api/doctors", async (DoctorService service, [FromBody] Doctor doctor) =>
 {
-    await db.Doctors.AddAsync(doctor);
-    await db.SaveChangesAsync();
-    return Results.Created($"/api/patients/{doctor.Id}", doctor);
+    var response = await service.AddNewDoctor(doctor);
+    return Results.Created($"/api/patients/{response.Id}", response);
 });
 
 app.Run();
